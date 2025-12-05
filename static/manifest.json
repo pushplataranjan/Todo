@@ -1,0 +1,17 @@
+{
+  "name": "Todo Workshop App",
+  "short_name": "Todo",
+  "description": "A full-stack Todo application for workshop contributors",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f9fafb",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}
+

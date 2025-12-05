@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo Workshop App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>📝 Todo Workshop App</h1>
+            <div class="header-actions">
+                <button id="notificationBtn" class="btn-icon" title="Notifications">
+                    🔔 <span id="notificationCount" class="badge">0</span>
+                </button>
+                <button id="settingsBtn" class="btn-icon" title="Settings">⚙️</button>
+            </div>
+        </header>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-value" id="totalTodos">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="completedTodos">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="pendingTodos">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="highPriorityTodos">0</div>
+                <div class="stat-label">High Priority</div>
+            </div>
+        </section>
+
+        <!-- Filters and Search -->
+        <section class="filters-section">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search todos...">
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="pending">Pending</button>
+                <button class="filter-btn" data-filter="completed">Completed</button>
+                <button class="filter-btn" data-filter="high">High Priority</button>
+            </div>
+            <div class="priority-filter">
+                <select id="priorityFilter">
+                    <option value="">All Priorities</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+                <select id="categoryFilter">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Add Todo Form -->
+        <section class="add-todo-section">
+            <button id="addTodoBtn" class="btn-primary">+ Add New Todo</button>
+            <form id="todoForm" class="todo-form hidden">
+                <input type="text" id="todoTitle" placeholder="Todo title *" required>
+                <textarea id="todoDescription" placeholder="Description"></textarea>
+                <div class="form-row">
+                    <select id="todoPriority">
+                        <option value="low">Low Priority</option>
+                        <option value="medium" selected>Medium Priority</option>
+                        <option value="high">High Priority</option>
+                    </select>
+                    <input type="date" id="todoDueDate">
+                    <input type="text" id="todoCategory" placeholder="Category">
+                </div>
+                <div class="form-row">
+                    <input type="text" id="todoTags" placeholder="Tags (comma separated)">
+                    <button type="submit" class="btn-primary">Create Todo</button>
+                    <button type="button" id="cancelBtn" class="btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Todos List -->
+        <section class="todos-section">
+            <div id="todosContainer" class="todos-container">
+                <div class="loading">Loading todos...</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modals -->
+    <div id="notificationModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Notifications</h2>
+                <button class="close-btn" id="closeNotificationModal">&times;</button>
+            </div>
+            <div id="notificationsList" class="notifications-list"></div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="close-btn" id="closeSettingsModal">&times;</button>
+            </div>
+            <div class="settings-content">
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="emailNotifications">
+                        Enable Email Notifications
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="browserNotifications">
+                        Enable Browser Notifications
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <h3>User Profile</h3>
+                    <input type="text" id="userName" placeholder="Username">
+                    <input type="email" id="userEmail" placeholder="Email">
+                    <button id="saveUserBtn" class="btn-primary">Save User</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
