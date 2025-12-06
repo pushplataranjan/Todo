@@ -45,6 +45,9 @@ function setupEventListeners() {
     // Modals
     document.getElementById('notificationBtn').addEventListener('click', openNotificationModal);
     document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
+    
+    const printBtn = document.getElementById('printBtn');
+    if (printBtn) printBtn.addEventListener('click', handlePrint);
     document.getElementById('closeNotificationModal').addEventListener('click', closeNotificationModal);
     document.getElementById('closeSettingsModal').addEventListener('click', closeSettingsModal);
 
@@ -525,6 +528,102 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+// Print functions
+function buildFiltersSummary() {
+        const parts = [];
+        if (filters.completed === 'true') parts.push('Completed');
+        else if (filters.completed === 'false') parts.push('Pending');
+        if (filters.priority) parts.push(`Priority: ${filters.priority}`);
+        if (filters.category) parts.push(`Category: ${filters.category}`);
+        if (filters.search) parts.push(`Search: "${filters.search}"`);
+        return parts.length ? parts.join(' · ') : 'All todos';
+}
+
+function handlePrint() {
+        try {
+                // Use the currently-loaded todos (they reflect applied filters)
+                const items = todos.slice();
+
+                const printWindow = window.open('', '_blank');
+                if (!printWindow) {
+                        showToast('Unable to open print window (blocked by browser?)', 'error');
+                        return;
+                }
+
+                const header = document.querySelector('.header h1')?.textContent || 'Todos';
+                const filtersSummary = buildFiltersSummary();
+
+                const content = `<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>${escapeHtml(header)} - Print</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body { background: #fff; color: #111; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; padding: 18px; }
+        .print-header { margin-bottom: 18px; }
+        .print-header h2 { margin: 0 0 6px 0; font-size: 1.2rem; }
+        .print-filters { color: #444; margin-bottom: 6px; }
+        .todo-card { box-shadow: none; border-radius: 6px; margin-bottom: 12px; padding: 12px; }
+        .todo-meta { color: #444; font-size: 0.95rem; }
+        .todo-tags .tag { background: #111; color: #fff; }
+        @media print { .page-break { page-break-after: always; } }
+    </style>
+</head>
+<body>
+    <div class="print-header">
+        <div>
+            <h2>${escapeHtml(header)}</h2>
+            <div class="print-filters">${escapeHtml(filtersSummary)}</div>
+        </div>
+        <div style="text-align:right; color:#666; font-size:0.9rem">Printed: ${new Date().toLocaleString()}</div>
+    </div>
+    <main>
+        ${items.length === 0 ? '<p>No todos to print</p>' : items.map(todo => {
+                const dueDate = todo.due_date ? new Date(todo.due_date).toLocaleDateString() : 'No due date';
+                const tags = todo.tags && todo.tags.length ? todo.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('') : '';
+                const completed = todo.completed ? '<strong>(Completed)</strong>' : '';
+                return `
+                    <article class="todo-card ${todo.priority}-priority">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                            <div style="flex:1">
+                                <div class="todo-title">${escapeHtml(todo.title)} ${completed}</div>
+                                ${todo.description ? `<div class="todo-description" style="margin-top:6px">${escapeHtml(todo.description)}</div>` : ''}
+                            </div>
+                        </div>
+                        <div class="todo-meta" style="margin-top:8px">
+                            <span>📅 ${escapeHtml(dueDate)}</span>
+                            <span style="margin-left:12px">🏷️ ${escapeHtml(todo.priority)}</span>
+                            ${todo.category ? `<span style="margin-left:12px">📁 ${escapeHtml(todo.category)}</span>` : ''}
+                        </div>
+                        ${tags ? `<div class="todo-tags" style="margin-top:8px">${tags}</div>` : ''}
+                    </article>
+                `;
+        }).join('')}
+    </main>
+</body>
+</html>`;
+
+                printWindow.document.open();
+                printWindow.document.write(content);
+                printWindow.document.close();
+
+                // Give browser a moment to render styles before printing
+                setTimeout(() => {
+                        try {
+                                printWindow.focus();
+                                printWindow.print();
+                        } catch (err) {
+                                console.error('Print error:', err);
+                        }
+                }, 500);
+        } catch (err) {
+                console.error('handlePrint error:', err);
+                showToast('An error occurred preparing print view', 'error');
+        }
 }
 
 // Load Initial Data
