@@ -7,7 +7,7 @@ A full-stack Todo application built with Python (Flask) backend and vanilla Java
 ![Flask](https://img.shields.io/badge/Flask-3.0-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-## ✨ Features
+## ✨ Features By Amit
 
 - ✅ Create, read, update, and delete todos
 - 🏷️ Priority levels (Low, Medium, High)
